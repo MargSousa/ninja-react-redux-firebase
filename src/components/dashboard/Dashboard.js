@@ -10,8 +10,8 @@ class Dashboard extends React.Component {
 
   render() {
     const dummyProjects = this.props.projectsData;
+    const { projectsNew, notifications, auth } = this.props;
     
-    const { projectsNew, auth } = this.props;
     if(!auth.uid) { return <Redirect to='/signin' />};
 
     return(
@@ -21,7 +21,7 @@ class Dashboard extends React.Component {
             <ProjectList data={projectsNew} />
           </div>
           <div className="col s12 m5 offset-m1">
-            <Notifications />
+            <Notifications data={notifications} />
           </div>
         </div>
       </div>
@@ -30,17 +30,20 @@ class Dashboard extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+  console.log("store", state)
   return {
     projectsData: state.project.projects,
     projectsNew: state.firestore.ordered.projects,
-    auth: state.firebase.auth
+    auth: state.firebase.auth,
+    notifications: state.firestore.ordered.notifications
   }
 }
 
 
 export default compose(
   firestoreConnect([
-    { collection: 'projects' }
+    { collection: 'projects', orderBy: ['date', 'desc'] },
+    { collection: 'notifications', limit: 3, orderBy: ['time', 'desc'] }
   ]),
   connect(mapStateToProps)
 )(Dashboard)

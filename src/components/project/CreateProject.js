@@ -12,6 +12,7 @@ class CreateProject extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
     this.props.createProject(this.state)
+    this.props.history.push('/')
   }
 
   handleChange = (event) => {
